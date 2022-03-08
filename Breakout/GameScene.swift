@@ -14,6 +14,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var paddle = SKSpriteNode()
     var ball = SKShapeNode()
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch.location(in: self)
+            paddle.position.x = location.x
+        }
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch.location(in: self)
+            paddle.position.x = location.x
+        }
+    }
+    
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
@@ -32,9 +46,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func kickBall() {
-            ball.physicsBody?.isDynamic = true
-            ball.physicsBody?.applyImpulse(CGVector(dx: 3, dy: 5))
-        }
+        ball.physicsBody?.isDynamic = true
+        ball.physicsBody?.applyImpulse(CGVector(dx: 3, dy: 5))
+    }
     
     func createBackground() {
         let stars = SKTexture(imageNamed: "Stars")
