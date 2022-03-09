@@ -66,10 +66,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node == brick {
                 score += 1
                 updateLabels()
-                brick.removeFromParent()
-                removedBricks += 1
-                if removedBricks == bricks.count {
-                    gameOver(winner: true)
+                if brick.color == .blue {
+                    brick.color = .orange   // blue bricks turn orange
+                }
+                else if brick.color == .orange {
+                    brick.color = .green    // orange bricks turn green
+                }
+                else {  // must be a green brick, which get removed
+                    brick.removeFromParent()
+                    removedBricks += 1
+                    if removedBricks == bricks.count {
+                        gameOver(winner: true)
+                    }
                 }
             }
         }
@@ -178,10 +186,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // now, figure the number and spacing of each row of bricks
         let count = Int(frame.width) / 55   // bricks per row
         let xOffset = (Int(frame.width) - (count * 55)) / 2 + Int(frame.minX) + 25
-        let y = Int(frame.maxY) - 15
-        for i in 0..<count {
-            let x = i * 55 + xOffset
-            makeBrick(x: x , y: y, color: .green)
+        let colors: [UIColor] = [.blue, .orange, .green]
+        for r in 0..<3 {
+            let y = Int(frame.maxY) - 15 - (r * 25)
+            for i in 0..<count {
+                let x = i * 55 + xOffset
+                makeBrick(x: x , y: y, color: colors[r])
+            }
         }
     }
     
@@ -221,6 +232,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         else {
             playLabel.text = "You lose! Tap to play again"
+        }
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        if abs(ball.physicsBody!.velocity.dx) < 100 {
+            // ball has stalled in x direction, so kick it randomly horizontally
+            ball.physicsBody?.applyImpulse(CGVector(dx: Int.random(in: -3...3), dy: 0))
+        }
+        if abs(ball.physicsBody!.velocity.dy) < 100 {
+            // ball has stalled in y direct, so kick it randomly vertically
+            ball.physicsBody?.applyImpulse(CGVector(dx: 0, dy: Int.random(in: -3...3)))
         }
     }
 }
